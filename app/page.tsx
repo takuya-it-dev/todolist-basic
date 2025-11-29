@@ -48,6 +48,11 @@ export default function Home() {
             placeholder="やることを入力"
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                addTodo();
+              }
+            }}
           />
           <button
             onClick={addTodo}

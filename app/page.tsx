@@ -2,14 +2,39 @@
 
 import { useState } from "react";
 
+type Todo = {
+  id: number;
+  text: string;
+  done: boolean;
+};
+
 export default function Home() {
-  const [text, setText] = useState("");        // 入力中の文字
-  const [todos, setTodos] = useState<string[]>([]); // TODOリスト
+  const [text, setText] = useState("");
+  const [todos, setTodos] = useState<Todo[]>([]);
 
   const addTodo = () => {
-    if (!text.trim()) return; // 空欄は追加しない
-    setTodos([...todos, text]);
-    setText(""); // 入力欄リセット
+    if (!text.trim()) return;
+
+    const newTodo: Todo = {
+      id: Date.now(),
+      text: text.trim(),
+      done: false,
+    };
+
+    setTodos((prev) => [...prev, newTodo]);
+    setText("");
+  };
+
+  const toggleTodo = (id: number) => {
+    setTodos((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, done: !t.done } : t
+      )
+    );
+  };
+
+  const deleteTodo = (id: number) => {
+    setTodos((prev) => prev.filter((t) => t.id !== id));
   };
 
   return (
@@ -32,14 +57,25 @@ export default function Home() {
           </button>
         </div>
 
-        {/* TODO一覧 */}
         <ul className="space-y-2">
-          {todos.map((t, i) => (
+          {todos.map((todo) => (
             <li
-              key={i}
-              className="border rounded px-3 py-2 text-sm bg-slate-50 shadow"
+              key={todo.id}
+              className="flex items-center justify-between border rounded px-3 py-2 text-sm bg-slate-50 shadow"
             >
-              {t}
+              <button
+                onClick={() => toggleTodo(todo.id)}
+                className={`flex-1 text-left ${todo.done ? "line-through text-slate-400" : ""
+                  }`}
+              >
+                {todo.text}
+              </button>
+              <button
+                onClick={() => deleteTodo(todo.id)}
+                className="ml-2 text-xs text-red-500 hover:underline"
+              >
+                削除
+              </button>
             </li>
           ))}
         </ul>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useEffect } from "react";
 
 type Todo = {
   id: number;
@@ -11,6 +12,18 @@ type Todo = {
 export default function Home() {
   const [text, setText] = useState("");
   const [todos, setTodos] = useState<Todo[]>([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("todos");
+
+    if (saved) {
+      setTodos(JSON.parse(saved));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   const addTodo = () => {
     if (!text.trim()) return;
